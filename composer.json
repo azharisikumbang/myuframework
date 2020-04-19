@@ -1,0 +1,12 @@
+{
+    "name": "kum/myu",
+    "description": "A micro framework based on mvc concept",
+    "type": "project",
+    "authors": [
+        {
+            "name": "kum",
+            "email": "azharisaputrasikumbang@gmail.com"
+        }
+    ],
+    "require": {}
+}
