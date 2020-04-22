@@ -11,21 +11,43 @@ class Request
 
 	private $args = [];
 
+	private $headers = [];
+
 	public function __construct()
 
 	{
-		$this->requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
-		$this->requestUri = trim(isset($_GET['route']) ? $_GET['route'] : $_SERVER['REQUEST_URI'], "/");
+
+		foreach ($_SERVER as $key => $value) {
+			$key = strtolower(str_replace("_", "-", $key));
+			$this->headers[$key] = $value;
+		}
+
+		$serverName = strtolower(explode('/', $this->getHeader('server-software'))[0]);
+
+		if (preg_match('/apache/', $serverName)) {
+			$this->requestUri = isset($_GET['route']) ? $_GET['route'] : '/';
+		} else {
+			$this->requestUri = $_SERVER['REQUEST_URI'];
+		}
+
+		$this->requestUri = trim($this->requestUri, '/');
+
+		
+	}
+
+	public function getHeader($header)
+	{
+		return $this->headers[$header];
 	}
 
 	public function getBody()
 	{
-		if ($this->requestMethod == 'GET') 
+		if ($this->getHeader('request-method') == 'GET') 
 		{
 			return;
 		}
 
-		if ($this->requestMethod == 'POST') 
+		if ($this->getHeader('request-method') == 'POST') 
 		{
 			return $_POST;
 		}

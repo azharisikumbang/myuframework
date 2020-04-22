@@ -94,13 +94,10 @@ class Router
 		$args = [];
 		$found = [false];
 
+		
+
 		if ($request == '/' && $this->request->requestUri == '/') {
-			// PHP web server
 			// Found root web
-			$found[0] = true;
-			
-		} else if($request == '/' && !isset($_GET['route'])) {
-			// For web server
 			$found[0] = true;
 		} else {
 			// Parse Params
@@ -121,7 +118,7 @@ class Router
 		return [$found[0], $args];
 	}
 
-	public function call($handler)
+	public function call($handler) : void
 	{
 
 		// Set Params
@@ -143,7 +140,12 @@ class Router
 
 		}
 
-		return [$handler, $this->params];
+		$this->activeController = [$handler, $this->params];
+
+		if (is_object($this->activeController[0])) {
+			array_push($this->activeController, true);
+		}
+
 
 	}
 
@@ -169,11 +171,7 @@ class Router
 					$this->request->setArgs($args);
 
 					// Call handler
-					$this->activeController = $this->call($handler);
-
-					if (is_object($this->activeController[0])) {
-						array_push($this->activeController, true);
-					}
+					$this->call($handler);
 
 				} 
 
