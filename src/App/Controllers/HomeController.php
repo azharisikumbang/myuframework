@@ -8,8 +8,8 @@ use Myu\Components\Routing\Controller;
  */
 class HomeController extends Controller
 {
-	public function index()
+	public function index($request, $response)
 	{
-		echo "home page";
+		$this->render('home.php');
 	}
 }
