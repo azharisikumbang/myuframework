@@ -7,3 +7,7 @@ $router->get('/user/{app}', function($req) {
 	echo $req->getArg('app');
 });
 
+$router->handler(404, function() {
+	echo "404";
+});
+
