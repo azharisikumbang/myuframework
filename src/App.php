@@ -5,6 +5,7 @@ use Myu\Bootstrap\Environment;
 use Myu\Components\Routing\Router;
 use Myu\Components\Routing\Request;
 use Myu\Components\Routing\Response;
+use Myu\Config\Config;
 
 /**
  * Application
@@ -16,17 +17,21 @@ class App
 	private $call;
 
 	protected $router;
-	protected $path;
+
+	private $basePath;
 
 
 	public function __construct($file)
 	{
-		$this->path = $file;
+		$this->basePath = $file;
 		$this->env = Environment::load($file);
-		$this->router = new Router(new Request, new Response, $this->path);
+		$this->router = new Router(new Request, new Response, $this->basePath);
 	}
 
 	public function run(){
+
+		Config::setBasePath($this->basePath);
+
 		$active = $this->router->getActiveController();
 
 		if (!isset($active[2])) {
