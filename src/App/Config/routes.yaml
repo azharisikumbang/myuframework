@@ -1,7 +1,14 @@
-routes:
-  - 
-    url: '/user'
-    handler: 'Home@User'
-  - 
-    url: '/account'
-    handler: 'Home@Account'
+-  martin:
+    name: Martin D'vloper
+    job: Developer
+    skills:
+      - python
+      - perl
+      - pascal
+-  tabitha:
+    name: Tabitha Bitumen
+    job: Developer
+    skills:
+      - lisp
+      - fortran
+      - erlang
