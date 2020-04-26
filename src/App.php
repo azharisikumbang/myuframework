@@ -5,7 +5,7 @@ use Myu\Bootstrap\Environment;
 use Myu\Components\Routing\Router;
 use Myu\Components\Routing\Request;
 use Myu\Components\Routing\Response;
-use Myu\Config\Config;
+use Myu\Handler\Config;
 
 /**
  * Application
@@ -30,7 +30,10 @@ class App
 
 	public function run(){
 
+		$this->setupEnvironment();
+
 		Config::setBasePath($this->basePath);
+		Config::setAutoload();
 
 		$active = $this->router->getActiveController();
 
@@ -50,6 +53,31 @@ class App
 	public function route($callback, $namespace){
 		$this->namespace = $namespace;
 		call_user_func_array($callback, [$this->router]);
+	}
+
+	private function setupEnvironment()
+	{
+		$envs = ["development", "production", "staging"];
+		$env = strtolower(env("APP_ENV"));
+
+		switch ($env) {
+			case 'development':
+			case 'staging':
+            	error_reporting(E_ALL);
+	            break;
+
+	        case 'production':
+	            ini_set('display_errors', 0);
+				ini_set('log_errors', 1);
+				error_reporting(E_ERROR | E_WARNING | E_PARSE);
+	            break;
+			
+			default:
+				http_response_code(500);
+				throw new \Myu\Handler\Error("Unknown Environment! Please check on your .env file", 500, ".env");
+				break;
+		}
+
 	}
 
 }
