@@ -1,7 +1,7 @@
 <?php
 namespace Myu\Components\Routing;
 
-use Myu\Config\Config;
+use Myu\Handler\Config;
 
 
 /**
@@ -16,10 +16,12 @@ class Controller
 	public function __construct()
 	{
 		$this->basePath = Config::getBasePath();
+		$this->config = Config::getConfig("structure");
 	}
 
 	public function render(string $view, $data = null){
-		require_once $this->basePath . "/src/App/Views/" .$view;
+		$viewFile = (!strpos($view, '.php')) ? $view . ".php" : $view; 		
+		require_once $this->basePath . "/src/App/" . $this->config['views_folder'] . "/" .$viewFile;
 	}
 
 }
