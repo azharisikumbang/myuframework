@@ -38,55 +38,55 @@ class Router
      *
      * @return void
      */
-	public function get($request, $handler) : void
+	public function get($request, $handler, $path = null) : void
 	{
 
 		$requestMethod = 'GET';
 
-		$this->map($requestMethod, $request, $handler);
+		$this->map($requestMethod, $request, $handler, $path);
 
 	}
 
-	public function post($request, $handler) : void
+	public function post($request, $handler, $path = null) : void
 	{
 
 		$requestMethod = 'POST';
 
-		$this->map($requestMethod, $request, $handler);
+		$this->map($requestMethod, $request, $handler, $path);
 
 	}
 
-	public function put($request, $handler) : void
+	public function put($request, $handler, $path = null) : void
 	{
 
 		$requestMethod = 'PUT';
 
-		$this->map($requestMethod, $request, $handler);
+		$this->map($requestMethod, $request, $handler, $path);
 
 	}
 
-	public function patch($request, $handler) : void
+	public function patch($request, $handler, $path = null) : void
 	{
 
 		$requestMethod = 'PATCH';
 
-		$this->map($requestMethod, $request, $handler);
+		$this->map($requestMethod, $request, $handler, $path);
 
 	}
 
-	public function delete($request, $handler) : void
+	public function delete($request, $handler, $path = null) : void
 	{
 
 		$requestMethod = 'DELETE';
 
-		$this->map($requestMethod, $request, $handler);
+		$this->map($requestMethod, $request, $handler, $path);
 
 	}
 
-	public function set($method, $request, $handler) : void
+	public function set($method, $request, $handler, $path = null) : void
 	{
 
-		$this->map($method, $request, $handler);
+		$this->map($method, $request, $handler, $path);
 
 	}
 
@@ -118,7 +118,7 @@ class Router
 		return [$found[0], $args];
 	}
 
-	public function call($handler) : void
+	public function call($handler, $path = null) : void
 	{
 
 		// Set Params
@@ -130,7 +130,7 @@ class Router
 			$controllerAndMethod = $this->parseControllerAndMethod($handler);
 
 			// Load controller
-			$this->controller = $controllerAndMethod[0];
+			$this->controller = (!is_null($path)) ? $path . "\\" . $controllerAndMethod[0] : $controllerAndMethod[0];
 
 				// Load method
 			$this->method = isset($controllerAndMethod[1]) ? $controllerAndMethod[1] : $this->method;
@@ -149,7 +149,7 @@ class Router
 
 	}
 
-	public function map($method, $request, $handler)
+	public function map($method, $request, $handler, $path = null)
 	{
 
 		// Check the Server Request Mothod
@@ -171,7 +171,7 @@ class Router
 					$this->request->setArgs($args);
 
 					// Call handler
-					$this->call($handler);
+					$this->call($handler, $path);
 
 				} 
 
@@ -190,8 +190,16 @@ class Router
 	// For custom handler
 	public function handler(int $errorCode, $callback){
 
-		if (!in_array(true, $this->found)) {
-			$this->call($callback);
+		switch ($errorCode) {
+			case 404:
+				if (!in_array(true, $this->found)) {
+					$this->call($callback);
+				}
+				break;
+			
+			default:
+				// Will be update for an other error response code
+				break;
 		}
 
 		return;
@@ -241,9 +249,9 @@ class Router
 		return [$pattern];
 	}
 
-	private function loadController($controller){
+	private function loadController($controller)
+	{
 		require $this->path . '/src/App/Controllers/'. $controller .'.php';
-		// return new $controller();
 	}
 
 }
