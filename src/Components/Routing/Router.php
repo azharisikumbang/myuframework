@@ -25,7 +25,7 @@ class Router
 
 	private $activeController;
 
-	public function __construct(Request $request, Response $response, $path)
+	public function __construct(Request $request, Response $response, $path = null)
 	{
 		$this->request = $request;
 		$this->response = $response;
@@ -35,7 +35,7 @@ class Router
 	/**
      * @param string $request Request Uri
      * @param string $handler Callback Handler
-     *
+     * @param string $path use for folder on class controller
      * @return void
      */
 	public function get($request, $handler, $path = null) : void
@@ -153,7 +153,7 @@ class Router
 	{
 
 		// Check the Server Request Mothod
-		if (in_array($_SERVER['REQUEST_METHOD'], $this->requestMethod)) {
+		if (isset($_SERVER['REQUEST_METHOD']) && in_array($_SERVER['REQUEST_METHOD'], $this->requestMethod)) {
 			// Filter Request Method
 			if ($_SERVER['REQUEST_METHOD'] === $method) {
 				

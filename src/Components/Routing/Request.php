@@ -1,11 +1,10 @@
 <?php
 namespace Myu\Components\Routing;
 
-
 /**
  * Request Handler
  */
-class Request 
+class Request
 {
 	private $requestMethod;
 
@@ -21,8 +20,9 @@ class Request
 			$key = strtolower(str_replace("_", "-", $key));
 			$this->headers[$key] = $value;
 		}
-
-		$serverName = strtolower(explode('/', $this->getHeader('server-software'))[0]);
+		
+		$serverName = 'apache';
+		// $serverName = strtolower(explode('/', $this->getHeader('server-software'))[0]);
 
 		if (preg_match('/apache/', $serverName)) {
 			$this->requestUri = isset($_GET['route']) ? $_GET['route'] : '/';
@@ -42,15 +42,12 @@ class Request
 
 	public function getBody()
 	{
-		if ($this->getHeader('request-method') == 'GET') 
-		{
-			return;
-		}
-
 		if ($this->getHeader('request-method') == 'POST') 
 		{
 			return $_POST;
 		}
+
+		return;
 	}
 
 	public function getArg($arg){
@@ -74,4 +71,4 @@ class Request
 		return json_encode($this->args);
 	}
 
-}
+}	 
