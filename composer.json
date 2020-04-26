@@ -14,6 +14,9 @@
     "autoload": {
         "psr-4": {
             "Myu\\": "src/"
-        }
+        },
+        "files": [
+            "src/Components/Helper/Base.php"
+        ]
     }
 }
