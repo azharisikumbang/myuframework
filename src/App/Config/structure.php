@@ -4,5 +4,5 @@ return [
 	"views_folder" => "Views",
 	"models_folder" => "Models",
 	"helpers_folder" => "Helpers",
-	"assets_folder" => "assets"
+	"assets_folder" => "public/assets"
 ];
