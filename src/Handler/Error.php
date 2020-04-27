@@ -19,8 +19,9 @@ class Error extends Exception
 	 * @return void
      */
 
-	public function __construct($message, $code, $file = null, $line = 0, Exception $previous = null)
+	public function __construct($message, $code = 500, $file = null, $line = 0, Exception $previous = null)
 	{
+		http_response_code($code);
 		$this->file = (!is_null($file)) ? $file : __FILE__;
 		$this->line = (!is_null($line)) ? $line : __LINE__;
 		parent::__construct($message, $code, $previous);
