@@ -1,6 +1,7 @@
 {
     "name": "skumb/myuframework",
     "description": "A micro framework based on mvc concept | JUST FOR LEARNING",
+    "type": "library",
     "authors": [
         {
             "name": "kum",
