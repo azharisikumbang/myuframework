@@ -28,9 +28,7 @@ class Controller
 	public function __construct()
 	{
 		$this->basePath = Config::getBasePath();
-		$this->config = Config::getConfig("structure");
 	}
-
 
 	/**
 	 * Get the string contents of the view
@@ -39,8 +37,9 @@ class Controller
 	 * @param array|null @data
 	 */ 
 	public function render(string $view, $data = null){
-		$viewFile = (!strpos($view, '.php')) ? $view . ".php" : $view; 		
-		require_once $this->basePath . "/src/App/" . $this->config['views_folder'] . "/" .$viewFile;
+		$view_file = (!strpos($view, '.php')) ? $view . ".php" : $view; 
+		$view_path = (Config::getConfig('views_folder')) ? Config::getConfig('views_folder') . "/" : null;
+		require_once $this->basePath . "/src/" . $view_path .$view_file;
 	}
 
 }
