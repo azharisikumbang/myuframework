@@ -1,88 +1,146 @@
 <?php
 namespace Myu\Components\Routing;
 
+use Myu\Components\Routing\Request;
+use Myu\Components\Routing\Response;
+
 /**
  * Route Class
  *
  */
 class Router
 {
-	private $app;
-
+	/**
+	 * @var Instance of Myu\Components\Routing\Request
+	 */
 	private $request;
+	/**
+	 * @var Instance of Myu\Components\Routing\Response
+	 */
+	private $response;
 
-	private $controller = 'ErrorController';
+	/**
+	 * @var Controller name
+	 */
+	private $controller;
 
-	private $method = 'pageNotFound';
+	/**
+	 * @var method name
+	 */
+	private $method = 'index';
 
+	/**
+	 * @var parameters
+	 */
 	private $params = [];
 
+	/**
+	 * @var page found status 
+	 */
 	private $found = [];
 
+	/**
+	 * @var allowed HTTP request Method
+	 */
 	private $requestMethod = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
+	/**
+	 * @var app base path
+	 */
 	private $path;
 
+	/**
+	 * @var Controller will be excuted
+	 */
 	private $activeController;
 
-	public function __construct(Request $request, Response $response, $path = null)
+	/**
+	 * Constructor for Router Class
+	 *
+	 * @param string $path app base path
+	 * @return void
+	 */
+	public function __construct($path = __DIR__)
 	{
-		$this->request = $request;
-		$this->response = $response;
+		$this->request = new Request;
+		$this->response = new Response;
 		$this->path = $path;
 	}
-	
+
 	/**
+	 * GET HTTP Handler Method
+	 *
      * @param string $request Request Uri
-     * @param string $handler Callback Handler
-     * @param string $path use for folder on class controller
+     * @param string|callable $handler Callback Handler
+     * @param string|null $path use for folder on class controller
      * @return void
-     */
+    */
 	public function get($request, $handler, $path = null) : void
 	{
-
-		$requestMethod = 'GET';
-
-		$this->map($requestMethod, $request, $handler, $path);
-
+		$this->map('GET', $request, $handler, $path);
 	}
 
+	/**
+	 * POST HTTP Handler Method
+	 *
+     * @param string $request Request Uri
+     * @param string|callable $handler Callback Handler
+     * @param string|null $path Controler's path
+     * @return void
+    */	
 	public function post($request, $handler, $path = null) : void
 	{
-
-		$requestMethod = 'POST';
-
-		$this->map($requestMethod, $request, $handler, $path);
-
+		$this->map('POST', $request, $handler, $path);
 	}
 
+	/**
+	 * PUT HTTP Handler Method
+	 *
+     * @param string $request Request Uri
+     * @param string|callable $handler Callback Handler
+     * @param string|null $path Controler's path
+     * @return void
+    */	
 	public function put($request, $handler, $path = null) : void
 	{
-
-		$requestMethod = 'PUT';
-
-		$this->map($requestMethod, $request, $handler, $path);
-
+		$this->map('PUT', $request, $handler, $path);
 	}
 
+	/**
+	 * PATCH HTTP Handler Method
+	 *
+     * @param string $request Request Uri
+     * @param string|callable $handler Callback Handler
+     * @param string|null $path Controler's path
+     * @return void
+    */	
 	public function patch($request, $handler, $path = null) : void
 	{
-
-		$requestMethod = 'PATCH';
-
-		$this->map($requestMethod, $request, $handler, $path);
-
+		$this->map('PATCH', $request, $handler, $path);
 	}
 
+	/**
+	 * DELETE HTTP Handler Method
+	 *
+     * @param string $request Request Uri
+     * @param string|callable $handler Callback Handler
+     * @param string|null $path Controler's path
+     * @return void
+    */	
 	public function delete($request, $handler, $path = null) : void
 	{
-
-		$requestMethod = 'DELETE';
-
-		$this->map($requestMethod, $request, $handler, $path);
-
+		$this->map('DELETE', $request, $handler, $path);
 	}
 
+	/**
+	 * Manual set of HTTP Handler Method
+	 *
+     * @param string $method Method Name
+     * @param string $request Request Uri
+     * @param string|callable $handler Callback Handler
+     * @param string|null $path Controler's path
+     * @return void
+    */	
 	public function set($method, $request, $handler, $path = null) : void
 	{
 
@@ -90,11 +148,16 @@ class Router
 
 	}
 
-	private function findRouteAndSetArgs($request){
-		$args = [];
-		$found = [false];
+	/**
+	 * get uri and arguments
+	 *
+     * @param string $request
+     * @return array
+    */	
 
-		
+	private function findRouteAndSetArgs($request){
+		$args = []; // arguments
+		$found = [false]; // found status
 
 		if ($request == '/' && $this->request->requestUri == '/') {
 			// Found root web
@@ -118,6 +181,13 @@ class Router
 		return [$found[0], $args];
 	}
 
+	/**
+	 * Call to active controller
+	 *
+     * @param string|callable $handler 
+     * @param string|null $path handler path
+     * @return void
+    */	
 	public function call($handler, $path = null) : void
 	{
 
@@ -149,6 +219,15 @@ class Router
 
 	}
 
+	/**
+	 * Mapping the request
+	 *
+     * @param string $method Method Name
+     * @param string $request Request Uri
+     * @param string|callable $handler Callback Handler
+     * @param string|null $path Controler's path
+     * @return void
+    */	
 	public function map($method, $request, $handler, $path = null)
 	{
 
@@ -169,6 +248,7 @@ class Router
 
 					// Set argument to controller
 					$this->request->setArgs($args);
+					$this->response->setArgs($args);
 
 					// Call handler
 					$this->call($handler, $path);
@@ -177,23 +257,32 @@ class Router
 
 			}
 		} 
-
-		return;
-
 	}
 
+	/**
+	 * Get active controller
+	 *
+     * @return string active controller
+    */	
 	public function getActiveController()
 	{
 		return $this->activeController;
 	}
 
-	// For custom handler
-	public function handler(int $errorCode, $callback){
+	/**
+	 * HTTP code handler
+	 *
+     * @param string $method http response code
+     * @param string|callable  
+     * @param string|null $path controller's path
+     * @return void
+    */	
+	public function handler($errorCode, $callback, $path = null){
 
 		switch ($errorCode) {
-			case 404:
+			case '404':
 				if (!in_array(true, $this->found)) {
-					$this->call($callback);
+					$this->call($callback, $path);
 				}
 				break;
 			
@@ -206,6 +295,12 @@ class Router
 
 	}
 
+	/**
+	 * Parse parameters
+	 *
+     * @param string $pattern uri pattern
+     * @return array
+    */	
 	public function parseParams($pattern) 
 	{	
 		if (is_int($pattern)) {
@@ -240,6 +335,12 @@ class Router
 
 	}
 
+	/**
+	 * Get controller name and method name
+	 *
+     * @param string $pattern
+     * @return array
+    */	
 	private function parseControllerAndMethod($pattern) : array 
 	{
 		if (strpos($pattern, '@')) {
@@ -248,11 +349,5 @@ class Router
 
 		return [$pattern];
 	}
-
-	private function loadController($controller)
-	{
-		require $this->path . '/src/App/Controllers/'. $controller .'.php';
-	}
-
 }
 		

@@ -6,32 +6,45 @@ namespace Myu\Components\Routing;
  */
 class Response 
 {
-
+	/**
+	 * @var arguments
+	 */
 	private $args = [];
 
+	/**
+	 * set all arguments
+	 *
+	 * @param mixed $args
+	 * @return void
+	 */
+	public function setArgs($args)
+	{
+		$this->args = $args;
+	}
+
+	/**
+	 * get body contents
+	 *
+	 * @return array|bool
+	 */
 	public function getBody()
 	{
-		if ($this->requestMethod == 'GET') 
-		{
-			return;
-		}
-
 		if ($this->requestMethod == 'POST') 
 		{
 			return $_POST;
 		}
+
+		return;
 	}
 
+	/**
+	 * get arguments by json data type
+	 *
+	 * @return aplication/json
+	 */
 	public function getJson(){
-		echo json_encode($this->args);
-	}
-
-	public function getArg($arg){
-		return $this->args[$arg];
-	}
-
-	public function getArgs(){
-		return $this->params;
+		header('Content-type: application/json');
+		return json_encode($this->args);
 	}
 
 }

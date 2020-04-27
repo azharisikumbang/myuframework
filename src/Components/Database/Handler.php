@@ -3,20 +3,35 @@ namespace Myu\Components\Database;
 
 use PDO;
 use Myu\Components\Database\Connector;
+
 /**
  * Database Handler
  */
 class Handler
 {
+	/**
+	* @var instance of Myu\Components\Database\Connector
+	*/
 	protected $connector;
 
+	/**
+	* @var PDO statement
+	*/
 	protected $stmt;
 
-
+	/**
+	* Create instance for connector
+	*/
 	public function __construct(){
 		$this->connector = new Connector;
 	}
 
+	/**
+	* Set Params for query statement
+	*
+	* @param array $data
+	* @return array
+	*/
 	public function setParams($data)
 	{
 		$bindParams = [];
@@ -47,11 +62,25 @@ class Handler
 		return $params;
 	}
 
+	/**
+	* Prepare statement
+	*
+	* @param string $query
+	* @return void
+	*/
 	public function prepare($query) : void
 	{
 		$this->stmt = $this->connector->dbh->prepare($query);
 	}
 
+	/**
+	* Binding param and value
+	*
+	* @param string $param
+	* @param string value
+	* @param PDO CONSTANT|null type
+	* @return void
+	*/
 	public function bind($param, $value, $type = null) : void
 	{
 		if (is_null($type)) {
@@ -73,11 +102,24 @@ class Handler
 		$this->stmt->bindValue($param, $value, $type);
 	}
 
+	/**
+	* Executing statement
+	*
+	* @return void
+	*/
 	public function execute() 
 	{
-		return $this->stmt->execute();
+		$this->stmt->execute();
 	}
 
+	/**
+	* Fetching data by type of fetching (single|count|null) 
+	* types are base on PDO CONSTANT
+	*
+	* @param string $fetch
+	* @param PDO CONSTANT|null type
+	* @return array|int|null
+	*/
 	public function fetch($fetch)
 	{	
 
@@ -97,6 +139,11 @@ class Handler
 		return $this->stmt->$action($params);
 	}
 
+	/**
+	* Count data
+	*
+	* @return int
+	*/
 	public function count(){
 		return $this->stmt->fetchColumn();
 	}

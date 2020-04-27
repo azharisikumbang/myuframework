@@ -3,40 +3,67 @@ namespace Myu;
 
 use Myu\Bootstrap\Environment;
 use Myu\Components\Routing\Router;
-use Myu\Components\Routing\Request;
-use Myu\Components\Routing\Response;
 use Myu\Handler\Config;
 
 /**
- * Application
+ * App Class
  */
 class App
 {
-	private $env;
-	private $namespace;
-	private $call;
 
+	/**
+     * @var instance of use Myu\Components\Routing\Router
+     */	
 	protected $router;
 
+	/**
+     * @var app namespace
+     */	
+	private $namespace;
+
+	/**
+     * @var app base path
+     */	
 	private $basePath;
 
-
-	public function __construct($file)
+	/**
+	 * Build Application
+	 * its will be set environment, router and configuration
+	 *
+     * @param string $path envrontment file path
+     * @return void
+     */	
+	public function __construct($path)
 	{
-		$this->basePath = $file;
-		$this->env = Environment::load($file);
-		$this->router = new Router(new Request, new Response, $this->basePath);
+		
+		Environment::load($path);
+		
+		$this->basePath = $path;
+		$this->router = new Router($this->basePath);
 	}
 
+	/**
+	 * Run the app
+	 *
+     * @return void
+     */	
 	public function run(){
 
+		// Setup enviroment
 		$this->setupEnvironment();
 
+		// Config set base path and autolaod
 		Config::setBasePath($this->basePath);
 		Config::setAutoload();
 
+		/**
+		 * active controller will be run
+		 * active controller contains array, with values are controller name, method name, and bool is callable
+		 * if controller callable it doesnt need to instance the class
+		 *
+		 * @return void
+		 */
 		$active = $this->router->getActiveController();
-
 		if (!isset($active[2])) {
 			$controller = "\\" . $this->namespace . "\\" . $active[0][0];
 			$controller = new $controller();
@@ -50,11 +77,23 @@ class App
 		call_user_func_array($handler, $active[1]);
 	}
 
+	/**
+	 * routes caller, all routes will colect by this method
+	 *
+	 * @param callable $calback get the routes
+	 * @param string $namespace app namespace
+	 * @return void
+	 */
 	public function route($callback, $namespace){
 		$this->namespace = $namespace;
 		call_user_func_array($callback, [$this->router]);
 	}
 
+	/**
+	 * check and set the environment status
+	 * 
+	 * @return void
+	 */
 	private function setupEnvironment()
 	{
 		$envs = ["development", "production", "staging"];
@@ -73,6 +112,7 @@ class App
 	            break;
 			
 			default:
+				// return error if environment doesnt valid
 				http_response_code(500);
 				throw new \Myu\Handler\Error("Unknown Environment! Please check on your .env file", 500, ".env", 3);
 				break;
