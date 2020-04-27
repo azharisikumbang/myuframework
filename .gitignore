@@ -2,5 +2,5 @@
 .env
 .phpunit.result.cache
 /src/App
-/src/test
+/src/tests
 /src/Public
