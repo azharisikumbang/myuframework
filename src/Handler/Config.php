@@ -14,7 +14,7 @@ class Config
 	/**
      * @var all configuration
      */	
-	private static $config;
+	private static $config = [];
 
 	/**
      * Get app base path
@@ -41,22 +41,14 @@ class Config
 	 * 
 	 * @return void
      */
-	public static function setAutoload()
-	{
-		self::$config['autoload'] = require self::$basePath . "/src/App/Config/autoload.php";
-		self::setConfigFile();
-	}
 
-	/**
-     * set configuration file and load it
-	 * 
-	 * @return void
-     */
-	public static function setConfigFile()
+	public static function setConfig($name, $value)
 	{
-		foreach (self::$config['autoload'] as $key => $value) {
-			self::$config[$value] = require self::$basePath . "/src/App/Config/" . $value  . ".php";
+		if (array_key_exists($name, self::$config)) {	
+			throw new \Myu\Handler\Error("Falied to set config, please check your configuration", 500);
 		}
+
+		self::$config[$name] = $value;
 	}
 
 	/**
