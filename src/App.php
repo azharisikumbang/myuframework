@@ -74,7 +74,7 @@ class App
 			
 			default:
 				http_response_code(500);
-				throw new \Myu\Handler\Error("Unknown Environment! Please check on your .env file", 500, ".env");
+				throw new \Myu\Handler\Error("Unknown Environment! Please check on your .env file", 500, ".env", 3);
 				break;
 		}
 

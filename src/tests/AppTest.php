@@ -7,6 +7,6 @@ final class AppTest extends TestCase
 
 	public function testApp()
 	{
-		// Test run here		
+			
 	}
 }
