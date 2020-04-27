@@ -22,7 +22,7 @@ class Database
 	* @param string $table will provide table name of database when class build
 	* @return void
 	*/
-	public function __construct(string $table)
+	public function __construct(string $table = null)
 	{
 		$this->table = $table;
 		$this->handler = new Handler;
