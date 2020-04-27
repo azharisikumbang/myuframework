@@ -1,3 +1,6 @@
 /vendor
 .env
 .phpunit.result.cache
+/src/App
+/src/test
+/src/Public
