@@ -1,6 +1,8 @@
 /vendor
-.env
-.phpunit.result.cache
 /src/App
 /src/tests
 /src/Public
+.env
+.env.example
+.phpunit.result.cache
+composer.lock
