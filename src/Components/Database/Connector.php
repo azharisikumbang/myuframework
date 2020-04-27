@@ -29,7 +29,6 @@ class Connector
 			);
 
 		} catch (Exception $e) {
-			http_response_code(500);
 			throw new \Myu\Handler\Error("Failed to connect to database! Please check your connection on environment", 500, ".env", 5);
 		}
 	}
